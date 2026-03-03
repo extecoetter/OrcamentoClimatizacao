@@ -680,130 +680,13 @@
     <div class="card">
       <div id="servicesList" class="grid" style="gap:12px"></div>
 
-      <button class="add" id="btnAdd">
-        <span class="plus">+</span> ADICIONAR ITEM
-      </button>
-
-      <div style="margin-top:12px">
-        <label>Observações</label>
-        <textarea id="obs" placeholder="Observações (EX: instalação padrão, 3M de cobre, vácuo no sistema...)"></textarea>
-      </div>
-
-      <div class="totals">
-        <div class="grand">
-          <span>TOTAL GERAL</span>
-          <span class="value" id="totalLabel">R$ 0,00</span>
-        </div>
-      </div>
-      <div style="margin-top:12px">
-        <label>Desconto (R$)</label>
-        <div class="money">
-          <span>R$</span>
-          <input id="desconto" inputmode="decimal" placeholder="0,00" />
-        </div>
-      </div>
-
-
-      <div style="margin-top:12px">
-        <label>Forma de pagamento</label>
-        <select id="pagamento">
-          <option value="">Selecione...</option>
-          <option>Dinheiro/Pix</option>
-          <option>Cartão</option>
-        </select>
-      </div>
+      
     </div>
   </div>
 
-  <!-- PDF -->
-  <section class="pdf" id="pdf">
-<div class="top">
-  <div class="logoRow">
-    <img id="pdfLogo" src="logo.png" alt="logo" onerror="this.style.display='none'"/>
-  </div>
-
-  <div class="headRow">
-    <div class="instaladorBox">
-  <div class="instRow">
-    <div class="instLine">
-      <span class="k">Nome:</span>
-      <span class="v">Robson Andre Extecoetter</span>
-    </div>
-
-    <div class="instLine">
-      <span class="k">Whats:</span>
-      <span class="v whatsappLine">
-        <svg viewBox="0 0 24 24" width="14" height="14" style="margin-right:6px; vertical-align:-2px;">
-          <path fill="#16a34a" d="M20.5 11.9c0-4.7-3.9-8.6-8.6-8.6S3.3 7.2 3.3 11.9c0 1.5.4 2.9 1.1 4.1L3 21l5.1-1.3c1.2.7 2.6 1.1 3.9 1.1 4.7 0 8.5-3.9 8.5-8.6Z"/>
-        </svg>
-        <span id="pdfWhatsFix">(14) 99707-3447</span>
-      </span>
-    </div>
-  </div>
-
-  <div class="instLine bankLine"><span class="k">Chave Pix:</span> <span class="v">14 99707 3447 / Robson A Extecoetter</span></div>
-</div>
-
-        <div class="datebox">
-      <small>Data de emissão</small>
-      <div id="pdfData"></div>
-      <div class="validadeLine"><span class="k">Validade da proposta:</span> <span id="pdfValidade"></span></div>
-    </div>
-  </div>
-</div>
-    <div class="clientbox">
-      <div id="pdfClienteLine" style="font-weight:1000; color:#111827"></div>
-      <div id="pdfEndereco" style="margin-top:6px; color:#334155; font-weight:800"></div>
-    </div>
-
-    
-    <div class="pdfTitleCenter">Proposta Comercial</div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>DESCRIÇÃO DO SERVIÇO</th>
-          <th>QTD</th>
-          <th>SUBTOTAL</th>
-        </tr>
-      </thead>
-      <tbody id="pdfTbody"></tbody>
-    </table>
-
-    <div class="sum">
-      <div class="panel">
-        <div class="line"><span>Desconto:</span><span id="pdfDesconto">R$ 0,00</span></div>
-        <div class="grand"><span>TOTAL GERAL</span><b id="pdfTotal">R$ 0,00</b></div>
-      </div>
-    </div>
-
-    <div class="bottom">
-      <div class="box obs">
-        <small>Observações</small>
-        <div class="value" id="pdfObs"></div>
-      </div>
-      <div class="box pay">
-        <small>Forma de pagamento</small>
-        <div class="value" id="pdfPagamento"></div>
-      </div>
-    </div>
-
-    <div class="footer"></div>
-  </section>
-
-  <div class="actions">
-    <div class="inner">
-      <button class="btn" id="btnLimpar">Limpar</button>
-      <button class="btn primary" id="btnPdf">Gerar PDF</button>
-          <button cla
-<!-- Libs para gerar PDF e compartilhar (necessita internet, ou salve os arquivos localmente no seu repo) -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-
-ss="btn" id="btnWhats" type="button">Enviar para WhatsApp</button>
-    </div>
-  </div>
-
+  <!-- Libs para gerar PDF e compartilhar (necessita internet, ou salve os arquivos localmente no seu repo) -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 <!-- Config por cliente (coloque um config.js dentro da pasta do cliente) -->
 <script>
