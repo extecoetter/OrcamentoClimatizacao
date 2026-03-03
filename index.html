@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Proposta Comercial</title>
+  <title>Proposta Comercial - Climatização</title>
 
   <style>
     :root{
@@ -31,7 +31,7 @@
       padding: 0 14px;
     }
 
-    /* TOP BAR (APP) — SEM LOGO */
+    /* APP TOP BAR (SEM LOGO) */
     .appbar{
       background: linear-gradient(180deg, #2f80ff 0%, #1f6feb 100%);
       color:#fff;
@@ -100,7 +100,7 @@
     }
     textarea{ min-height: 90px; resize: vertical; }
 
-    /* SERVICE ITEM */
+    /* SERVICES */
     .service{
       border:1px solid var(--line);
       border-radius: 18px;
@@ -194,7 +194,6 @@
       font-weight:900;
     }
 
-    /* TOTAL */
     .totals{
       display:grid;
       gap:8px;
@@ -259,7 +258,7 @@
       justify-content:space-between;
       gap:18px;
       border-bottom: 2px solid #eef2f7;
-      padding-bottom: 16px;
+      padding-bottom: 14px;
     }
     .pdf .brand{
       display:flex;
@@ -267,12 +266,13 @@
       align-items:center;
     }
     .pdf .brand img{
-      width:64px;height:64px;
+      width:128px; /* DOBRO */
+      height:128px;
       object-fit:contain;
     }
     .pdf .brand h2{
       margin:0;
-      font-size: 20px;
+      font-size: 16px; /* menor */
       font-weight: 1000;
       color:#0b1220;
     }
@@ -287,6 +287,10 @@
       font-weight:1000;
       letter-spacing:.4px;
       text-transform: uppercase;
+      font-size: 10px; /* menor */
+    }
+    .pdf .datebox div{
+      font-size: 12px; /* menor */
     }
 
     .pdf .clientbox{
@@ -294,7 +298,7 @@
       background: var(--pdf-soft-blue);
       border-radius: 12px;
       padding: 14px;
-      margin-top: 16px;
+      margin-top: 14px;
       min-height: 90px;
     }
     .pdf .clientbox small{
@@ -309,12 +313,12 @@
     .pdf table{
       width:100%;
       border-collapse:collapse;
-      margin-top: 18px;
+      margin-top: 16px;
       font-size: 14px;
     }
     .pdf th{
       text-align:left;
-      color:#0f172a;
+      color: var(--brand-strong); /* azul forte */
       border-bottom:2px solid #0f172a;
       padding: 10px 0;
       font-weight: 1000;
@@ -330,7 +334,7 @@
     .pdf td:nth-child(3), .pdf th:nth-child(3){ width:140px; text-align:right; }
 
     .pdf .sum{
-      margin-top: 18px;
+      margin-top: 16px;
       display:flex;
       justify-content:flex-end;
     }
@@ -355,7 +359,7 @@
     }
 
     .pdf .bottom{
-      margin-top: 18px;
+      margin-top: 14px;
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:14px;
@@ -367,7 +371,7 @@
       min-height: 70px;
     }
     .pdf .bottom .box small{
-      color: var(--brand-strong);
+      color: var(--brand-strong); /* azul forte */
       font-weight: 1000;
       text-transform: uppercase;
       letter-spacing:.4px;
@@ -375,14 +379,8 @@
       margin-bottom: 6px;
     }
 
-    .pdf .footer{
-      margin-top: 22px;
-      padding-top: 14px;
-      border-top: 1px dashed #e5e7eb;
-      text-align:center;
-      color:#667085;
-      font-weight:800;
-    }
+    /* rodapé removido (sem texto) */
+    .pdf .footer{ display:none; }
 
     @media print{
       body{ background:#fff; }
@@ -444,7 +442,6 @@
         </div>
       </div>
 
-      <!-- Forma de pagamento por último (abaixo do total geral) -->
       <div style="margin-top:12px">
         <label>Forma de pagamento</label>
         <select id="pagamento">
@@ -506,9 +503,7 @@
       </div>
     </div>
 
-    <div class="footer">
-      <div>Orçamento gerado via app de Climatização</div>
-    </div>
+    <div class="footer"></div>
   </section>
 
   <div class="actions">
@@ -535,12 +530,17 @@
   }
 
   const PRESETS = [
-    { name: "Instalação Split 9000/12000 BTUs", price: 500 },
-    { name: "Instalação Split 18000/24000 BTUs", price: 800 },
-    { name: "Instalação Piso Teto / Cassete", price: 1200 },
-    { name: "Instalação Multi-Split (Por Evaporadora)", price: 650 },
-    { name: "Desinstalação de Equipamento", price: 250 },
+    { name: "Instalação Split 9000 a a12000 BTUs", price: 650 },
+    { name: "Instalação Split 18000 a 24000 BTUs", price: 800 },
     { name: "Limpeza e Higienização (Simples)", price: 180 },
+    { name: "Limpeza Química (Desmontagem Completa)", price: 350 },
+    { name: "Instalação Piso Teto / Cassete", price: 1200 },
+    { name: "Instalação Multi-Split (Por Evaporadora)", price: 450 },
+    { name: "Desinstalação de Equipamento", price: 250 },
+    { name: "Aplicaçao de Vácuo no Sistema", price: 180 },
+    { name: "Visita Técnica / Diagnostico", price: 150 },
+    { name: "Pressurizaçao com Nitrogenio", price: 200 },
+    { name: "Carga de Gás", price: 200 },
     { name: "Limpeza Química (Desmontagem Completa)", price: 350 },
   ];
 
@@ -709,11 +709,25 @@
     document.getElementById('pdfTotal').textContent = brl.format(total);
   }
 
+  function openWhatsApp(){
+    // Limitação: navegador não consegue anexar automaticamente um PDF no WhatsApp.
+    // Melhor esforço: abre o WhatsApp com uma mensagem pronta (usuário anexa o PDF que salvou).
+    const cliente = document.getElementById('cliente').value.trim();
+    const msg = `Segue a Proposta Comercial${cliente ? " do cliente " + cliente : ""}. (Salve o PDF e anexe aqui no WhatsApp.)`;
+    const url = "https://wa.me/?text=" + encodeURIComponent(msg);
+    window.open(url, "_blank");
+  }
+
   document.getElementById('btnAdd').addEventListener('click', addItem);
 
   document.getElementById('btnPdf').addEventListener('click', () => {
     fillPDF();
     window.print();
+
+    // Tenta abrir o WhatsApp logo após (alguns celulares podem bloquear pop-up).
+    setTimeout(() => {
+      openWhatsApp();
+    }, 700);
   });
 
   document.getElementById('btnLimpar').addEventListener('click', () => {
