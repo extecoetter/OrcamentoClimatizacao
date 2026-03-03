@@ -603,6 +603,40 @@
   font-size: 30px !important;
 }
 
+  
+/* --- SURGICAL PDF LAYOUT FIXES (v12-fix5) --- */
+
+/* tighter installer lines: Nome / Whats (no blank space) */
+.pdf .instRow{ gap: 0 !important; }
+.pdf .instLine{ margin-top: 0 !important; line-height: 1.15 !important; }
+.pdf .instLine + .instLine{ margin-top: 2px !important; }
+
+/* remove extra separator above installer (keep only overall layout clean) */
+.pdf .instaladorBox{
+  border-top: none !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* keep "Chave Pix:" together and on one line */
+.pdf .bankLine .k{ white-space: nowrap !important; }
+.pdf .bankLine{ margin-top: 6px !important; }
+
+/* validade da proposta: slightly smaller */
+.pdf .datebox .validadeLine{ font-size: 11px !important; }
+
+/* enforce Proposta Comercial title black */
+.pdf .pdfTitleCenter{ color:#0b1220 !important; }
+
+/* Total geral value smaller (-4 total) */
+.pdf #pdfTotalGeral,
+.pdf #totalGeralValor,
+.pdf .totalValue,
+.pdf .totalGeralValor,
+.pdf .valorTotalGeral{
+  font-size: 28px !important;
+}
+
   </style>
 </head>
 
@@ -690,7 +724,6 @@
 
   <div class="headRow">
     <div class="instaladorBox">
-  <div class="instaladorBox">
   <div class="instRow">
     <div class="instLine">
       <span class="k">Nome:</span>
@@ -708,15 +741,10 @@
     </div>
   </div>
 
-  <div class="instLine bankLine">
-    <span class="k">Chave Pix:</span>
-    <span class="v">14 99707 3447 / Robson Andre Extecoetter / Nubank</span>
-  </div>
+  <div class="instLine bankLine"><span class="k">Chave Pix:</span> <span class="v">14 99707 3447 / Robson A Extecoetter</span></div>
 </div>
 
-</div>
-
-    <div class="datebox">
+        <div class="datebox">
       <small>Data de emissão</small>
       <div id="pdfData"></div>
       <div class="validadeLine"><span class="k">Validade da proposta:</span> <span id="pdfValidade"></span></div>
