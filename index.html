@@ -293,10 +293,10 @@
     
     .pdf .pdfTitleCenter{
       margin: 12px 0 10px 0;
-      font-size: 20px;
+      font-size: 18px; /* -2px */
       font-weight: 1000;
       text-align:center;
-      color:#0b1220;
+      color: var(--brand-strong);
       letter-spacing:.2px;
     }
 .pdf .headRow .title{
@@ -562,6 +562,35 @@
 .pdf .pdfTitleCenter{ margin: 12px 0 10px 0; }
 .pdf .clientbox{ margin-top: 12px; }
 
+  
+    /* --- SURGICAL PDF LAYOUT FIXES (v12-fix3) --- */
+    .pdf .pdfTitleCenter{
+      color: var(--brand-strong) !important;
+      font-size: 18px !important; /* 2pt smaller vs common 20px-ish heading */
+      font-weight: 1000 !important;
+      margin: 14px 0 10px 0 !important;
+      text-align:center;
+    }
+
+    /* prevent header overlap (installer vs date box) */
+    .pdf .headRow{
+      margin-top: 6px !important;  /* remove negative that caused overlap */
+      grid-template-columns: 1fr auto !important;
+      gap: 18px !important;
+    }
+    .pdf .instaladorBox{
+      max-width: 520px;
+    }
+    .pdf .datebox{
+      min-width: 160px;
+    }
+
+    /* keep Observações & Forma de Pagamento aligned left under TOTAL */
+    .pdf .obsBox, .pdf .payBox, .pdf .obsbox, .pdf .paybox{
+      text-align:left !important;
+      align-self:flex-start !important;
+    }
+    
   </style>
 </head>
 
@@ -651,11 +680,6 @@
     <div class="instaladorBox">
       <div class="instRow">
         <div class="instLine">
-          <span class="k">Nome:</span>
-          <span class="v">Robson Andre Extecoetter</span>
-        </div>
-
-        <div class="instLine">
           <span class="k">Whats:</span>
           <span class="v whatsappLine">
             <svg viewBox="0 0 24 24" width="14" height="14" style="margin-right:6px; vertical-align:-2px;">
@@ -675,7 +699,7 @@
     <div class="datebox">
       <small>Data de emissão</small>
       <div id="pdfData"></div>
-      <div class="validadeLine"><span class="k">Validade:</span> <span id="pdfValidade"></span></div>
+      <div class="validadeLine"><span class="k">Validade da proposta:</span> <span id="pdfValidade"></span></div>
     </div>
   </div>
 </div>
@@ -687,16 +711,7 @@
     
     <div class="pdfTitleCenter">Proposta Comercial</div>
 
-        
-        
-        <div class="instaladorBox">
-          <div class="instRow">
-            <div>
-              <span class="k">Nome:</span>
-              <span class="v">Robson Andre Extecoetter</span>
-            </div>
-            
-<table>
+    <table>
       <thead>
         <tr>
           <th>DESCRIÇÃO DO SERVIÇO</th>
