@@ -1107,7 +1107,9 @@ async function gerarPdfBlob(){
   return blob;
 }
 
+
 async function enviarPdfParaWhatsapp(){
+  // Tenta compartilhar o PDF diretamente (sem salvar)
   fillPDF();
 
   const fileName = "proposta.pdf";
@@ -1115,14 +1117,38 @@ async function enviarPdfParaWhatsapp(){
     const blob = await gerarPdfBlob();
     const file = new File([blob], fileName, { type: "application/pdf" });
 
-    if(navigator.share && navigator.canShare && navigator.canShare({ files: [file] })){
-      await navigator.share({
-        title: "Proposta Comercial",
-        text: "Segue a proposta em PDF.",
-        files: [file]
-      });
-      return;
+    // 1) Melhor caso: Web Share com arquivo (Android Chrome costuma suportar)
+    if(navigator.share){
+      try{
+        // Alguns navegadores não expõem navigator.canShare; então tentamos e, se falhar, caímos no fallback.
+        if(!navigator.canShare || navigator.canShare({ files: [file] })){
+          await navigator.share({
+            title: "Proposta Comercial",
+            text: "Segue a proposta em PDF.",
+            files: [file]
+          });
+          return; // sucesso
+        }
+      }catch(e){
+        // segue para fallback
+      }
     }
+
+    // 2) Fallback sem “salvar”: abre o PDF em uma nova aba (visualizador do navegador geralmente tem botão de compartilhar)
+    const blobUrl = URL.createObjectURL(blob);
+    window.open(blobUrl, "_blank");
+
+    // 3) E abre o WhatsApp com uma mensagem (anexo é feito pelo share do visualizador)
+    const msg = encodeURIComponent("Segue a proposta em PDF. Se não anexar automaticamente, use o botão compartilhar do PDF aberto e escolha o WhatsApp.");
+    window.open("https://wa.me/?text=" + msg, "_blank");
+
+    // libera URL depois de um tempo
+    setTimeout(()=>URL.revokeObjectURL(blobUrl), 60000);
+  }catch(err){
+    alert("Não foi possível gerar/compartilhar o PDF: " + (err && err.message ? err.message : err));
+  }
+}
+
 
     // Fallback: abre WhatsApp com mensagem (anexo precisa ser manual)
     const msg = encodeURIComponent("Segue a proposta. (Se o PDF não anexar automaticamente, clique em anexo e selecione o arquivo salvo.)");
