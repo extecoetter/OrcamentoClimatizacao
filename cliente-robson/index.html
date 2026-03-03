@@ -792,18 +792,11 @@
   </section>
 
   <div class="actions">
-    <div class="inner">
-      <button class="btn" id="btnLimpar">Limpar</button>
-      <button class="btn primary" id="btnPdf">Gerar PDF</button>
-          <button cla
-<!-- Libs para gerar PDF e compartilhar (necessita internet, ou salve os arquivos localmente no seu repo) -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-
-claEnviar para WhatsApp</button>
-    </div>
+  <div class="inner">
+    <button class="btn" id="btnLimpar" type="button">Limpar</button>
+    <button class="btn primary" id="btnPdf" type="button">Gerar PDF</button>
   </div>
-
+</div>
 
 <!-- Config por cliente (coloque um config.js dentro da pasta do cliente) -->
 <script>
@@ -1070,59 +1063,11 @@ const obs = document.getElementById('obs').value.trim();
 
     document.getElementById('pdfTotal').textContent = brl.format(totalFinal);
   }
-
-async function gerarPdfBlob(){
-  // Gera um PDF a partir da seção #pdf (sem abrir print)
-  const pdfEl = document.getElementById('pdf');
-  if(!pdfEl) throw new Error("Seção do PDF não encontrada.");
-  // Renderiza em canvas (melhor em mobile se o elemento estiver visível)
-  const canvas = await html2canvas(pdfEl, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
-  const imgData = canvas.toDataURL('image/jpeg', 0.95);
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: "p", unit: "pt", format: "a4" });
-
-  const pageW = doc.internal.pageSize.getWidth();
-  const pageH = doc.internal.pageSize.getHeight();
-
-  // Ajusta imagem à largura da página, mantendo proporção
-  const imgW = pageW;
-  const imgH = (canvas.height * imgW) / canvas.width;
-
-  if(imgH <= pageH){
-    doc.addImage(imgData, "JPEG", 0, 0, imgW, imgH);
-  }else{
-    // Paginação simples (corta em múltiplas páginas)
-    let y = 0;
-    let remaining = imgH;
-    while(remaining > 0){
-      doc.addImage(imgData, "JPEG", 0, -y, imgW, imgH);
-      remaining -= pageH;
-      y += pageH;
-      if(remaining > 0) doc.addPage();
-    }
   }
 
   const blob = doc.output("blob");
   return blob;
 }
-
-async function enviarPdfParaWhatsapp(){
-  fillPDF();
-
-  const fileName = "proposta.pdf";
-  try{
-    const blob = await gerarPdfBlob();
-    const file = new File([blob], fileName, { type: "application/pdf" });
-
-    if(navigator.share && navigator.canShare && navigator.canShare({ files: [file] })){
-      await navigator.share({
-        title: "Proposta Comercial",
-        text: "Segue a proposta em PDF.",
-        files: [file]
-      });
-      return;
-    }
 
     // Fallback: abre WhatsApp com mensagem (anexo precisa ser manual)
     const msg = encodeURIComponent("Segue a proposta. (Se o PDF não anexar automaticamente, clique em anexo e selecione o arquivo salvo.)");
@@ -1149,12 +1094,6 @@ async function enviarPdfParaWhatsapp(){
     fillPDF();
     window.print();
   });
-
-  const btnWhats = document.getElementById('btnWhats');
-  if(btnWhats){
-    btnWhats.addEventListener('click', enviarPdfParaWhatsapp);
-  }
-
   document.getElementById('btnLimpar').addEventListener('click', () => {
     state.items = [];
     renderItems();
