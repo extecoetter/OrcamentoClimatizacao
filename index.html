@@ -277,7 +277,7 @@
       align-items:flex-start;
       text-align:left;
       gap:6px;
-      margin-top:-75px; /* sobe tudo mais */
+      margin-top:-55px; /* sobe, mas sem cobrir a data */
     }
     .pdf .brand img{
       width:310px; /* ajuste aqui se quiser */
@@ -297,10 +297,13 @@
     .pdf .datebox{
       position:absolute;
       right:0;
-      top:-6px; /* sobe um pouco */
+      top:0;
+      z-index:30;
       text-align:right;
       font-weight:1000;
       color:#111827;
+      background:#fff;
+      padding: 2px 0 2px 12px;
     }
     .pdf .datebox small{
       display:block;
@@ -394,6 +397,12 @@
       width:100%;
       text-align:left;
     }
+
+    .pdf .bottom .value{ text-align:left; }
+    .pdf .bottom .box.pay .value{ font-size: 12px; font-weight:800; color:#334155; }
+    .pdf .bottom .box.obs .value{ font-size: 14px; font-weight:800; color:#334155; white-space:pre-wrap; }
+
+
     .pdf .bottom .box small{
       color: var(--brand-strong); /* azul forte */
       font-weight: 1000;
@@ -735,25 +744,11 @@
     document.getElementById('pdfTotal').textContent = brl.format(total);
   }
 
-  function openWhatsApp(){
-    // Limitação: navegador não consegue anexar automaticamente um PDF no WhatsApp.
-    // Melhor esforço: abre o WhatsApp com uma mensagem pronta (usuário anexa o PDF que salvou).
-    const cliente = document.getElementById('cliente').value.trim();
-    const msg = `Segue a Proposta Comercial${cliente ? " do cliente " + cliente : ""}. (Salve o PDF e anexe aqui no WhatsApp.)`;
-    const url = "https://wa.me/?text=" + encodeURIComponent(msg);
-    window.open(url, "_blank");
-  }
-
   document.getElementById('btnAdd').addEventListener('click', addItem);
 
   document.getElementById('btnPdf').addEventListener('click', () => {
     fillPDF();
     window.print();
-
-    // Tenta abrir o WhatsApp logo após (alguns celulares podem bloquear pop-up).
-    setTimeout(() => {
-      openWhatsApp();
-    }, 700);
   });
 
   document.getElementById('btnLimpar').addEventListener('click', () => {
