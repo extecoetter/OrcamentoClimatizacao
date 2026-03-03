@@ -19,7 +19,7 @@
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       background:var(--bg);
       color:var(--text);
     }
@@ -29,7 +29,6 @@
       padding: 0 14px;
     }
 
-    /* TOP APP BAR */
     .appbar{
       background: linear-gradient(180deg, #2f80ff 0%, #1f6feb 100%);
       color:#fff;
@@ -37,28 +36,41 @@
       border-radius: 18px;
       box-shadow: var(--shadow);
       margin-bottom: 14px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .appbar-left{
+      display:flex; gap:12px; align-items:center;
+    }
+    .appbar img{
+      width:44px; height:44px; object-fit:contain;
+      background: rgba(255,255,255,.15);
+      border:1px solid rgba(255,255,255,.25);
+      padding:6px;
+      border-radius: 14px;
     }
     .appbar h1{
       margin:0;
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing:.2px;
     }
-    .appbar p{margin:6px 0 0; opacity:.9; font-size: 13px}
+    .appbar p{margin:4px 0 0; opacity:.9; font-size: 13px}
 
-    /* SECTIONS */
     .section-title{
       display:flex;
       align-items:center;
       gap:10px;
       margin: 14px 2px 10px;
-      font-weight:800;
+      font-weight:900;
       color: #0f172a;
       letter-spacing:.3px;
     }
     .section-title small{
       margin-left:auto;
-      font-weight:700;
+      font-weight:800;
       color: var(--brand);
       background:#eaf2ff;
       padding: 6px 10px;
@@ -86,7 +98,7 @@
     label{
       display:block;
       font-size: 12px;
-      font-weight:800;
+      font-weight:900;
       color: var(--muted);
       margin: 2px 0 6px;
       text-transform: uppercase;
@@ -103,14 +115,6 @@
     }
     textarea{ min-height: 90px; resize: vertical; }
 
-    .row{
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-    .row > *{ flex:1; }
-
-    /* SERVICE ITEM */
     .service{
       border:1px solid var(--line);
       border-radius: 18px;
@@ -151,12 +155,12 @@
       left:14px;
       top:50%;
       transform: translateY(-50%);
-      font-weight:800;
+      font-weight:900;
       color: var(--muted);
     }
     .money input{
       padding-left: 48px;
-      font-weight: 800;
+      font-weight: 900;
     }
 
     .qty{
@@ -194,6 +198,7 @@
       justify-content:center;
       align-items:center;
       letter-spacing:.2px;
+      margin-top: 10px;
     }
     .add .plus{
       width:28px;height:28px;
@@ -205,11 +210,10 @@
       font-weight:900;
     }
 
-    /* TOTALS */
     .totals{
       display:grid;
       gap:8px;
-      margin-top: 10px;
+      margin-top: 12px;
       border-top:1px solid var(--line);
       padding-top: 12px;
     }
@@ -217,7 +221,7 @@
       display:flex;
       justify-content:space-between;
       color: var(--muted);
-      font-weight:800;
+      font-weight:900;
     }
     .totals .grand{
       display:flex;
@@ -232,7 +236,6 @@
       letter-spacing:.3px;
     }
 
-    /* ACTION BAR */
     .actions{
       position: fixed;
       left:0; right:0; bottom:0;
@@ -263,7 +266,7 @@
       color:#fff;
     }
 
-    /* PDF AREA (PRINT) */
+    /* PDF (PRINT) */
     .pdf{
       display:none;
       padding: 24px;
@@ -290,48 +293,42 @@
     .pdf .brand h2{
       margin:0;
       font-size: 22px;
-      font-weight: 900;
+      font-weight: 1000;
     }
     .pdf .brand p{
       margin:2px 0 0;
       color:#667085;
-      font-weight:700;
+      font-weight:800;
     }
     .pdf .datebox{
       text-align:right;
-      font-weight:900;
+      font-weight:1000;
       color:#111827;
     }
     .pdf .datebox small{
       display:block;
       color:#98a2b3;
-      font-weight:900;
+      font-weight:1000;
       letter-spacing:.4px;
       text-transform: uppercase;
     }
 
-    .pdf .cards{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:14px;
-      margin-top: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #eef2f7;
-    }
-    .pdf .cards .box{
+    .pdf .clientbox{
       border:1px solid #eef2f7;
       border-radius: 12px;
       padding: 14px;
-      min-height: 84px;
+      margin-top: 16px;
+      min-height: 90px;
     }
-    .pdf .cards .box small{
+    .pdf .clientbox small{
       color:#98a2b3;
-      font-weight: 900;
+      font-weight: 1000;
       text-transform: uppercase;
       letter-spacing:.4px;
       display:block;
       margin-bottom: 6px;
     }
+
     .pdf table{
       width:100%;
       border-collapse:collapse;
@@ -343,14 +340,14 @@
       color:#0f172a;
       border-bottom:2px solid #0f172a;
       padding: 10px 0;
-      font-weight: 900;
+      font-weight: 1000;
       letter-spacing:.2px;
     }
     .pdf td{
       padding: 12px 0;
       border-bottom:1px solid #eef2f7;
       color:#334155;
-      font-weight:700;
+      font-weight:800;
     }
     .pdf td:nth-child(2), .pdf th:nth-child(2){ width:70px; text-align:center; }
     .pdf td:nth-child(3), .pdf th:nth-child(3){ width:140px; text-align:right; }
@@ -365,14 +362,14 @@
       border-top: 1px solid #eef2f7;
       padding-top: 12px;
       text-align:right;
-      font-weight:900;
+      font-weight:1000;
     }
     .pdf .sum .panel .line{
       display:flex;
       justify-content:space-between;
       color:#667085;
       margin-bottom: 8px;
-      font-weight:800;
+      font-weight:900;
     }
     .pdf .sum .panel .grand{
       display:flex;
@@ -380,22 +377,43 @@
       align-items:baseline;
       margin-top: 6px;
       color:#0b1220;
-      font-weight: 1000;
+      font-weight: 1100;
     }
     .pdf .sum .panel .grand b{
       font-size: 28px;
       letter-spacing:.3px;
     }
+
+    .pdf .bottom{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    .pdf .bottom .box{
+      border:1px solid #eef2f7;
+      border-radius: 12px;
+      padding: 14px;
+      min-height: 70px;
+    }
+    .pdf .bottom .box small{
+      color:#98a2b3;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing:.4px;
+      display:block;
+      margin-bottom: 6px;
+    }
+
     .pdf .footer{
-      margin-top: 28px;
+      margin-top: 22px;
       padding-top: 14px;
       border-top: 1px dashed #e5e7eb;
       text-align:center;
       color:#667085;
-      font-weight:700;
+      font-weight:800;
     }
 
-    /* PRINT SWITCH: show PDF only */
     @media print{
       body{ background:#fff; }
       .wrap, .actions{ display:none !important; }
@@ -408,24 +426,18 @@
 <body>
   <div class="wrap">
     <div class="appbar">
-      <h1>Orçamento - Climatização</h1>
-      <p>Preencha, adicione serviços e gere o PDF no final.</p>
+      <div class="appbar-left">
+        <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+        <div>
+          <h1>Orçamento - Climatização</h1>
+          <p>Adicione serviços e gere o PDF.</p>
+        </div>
+      </div>
     </div>
 
     <div class="section-title">👤 DADOS DO ORÇAMENTO</div>
     <div class="card">
       <div class="grid cols-2">
-        <div>
-          <label>Sua Empresa</label>
-          <input id="empresa" placeholder="Seu Nome / Sua Empresa" />
-        </div>
-        <div>
-          <label>Logo (URL ou base64)</label>
-          <input id="logoUrl" placeholder="Cole o link do logo (opcional)" />
-        </div>
-      </div>
-
-      <div class="grid cols-2" style="margin-top:10px">
         <div>
           <label>Nome do Cliente</label>
           <input id="cliente" placeholder="Nome do Cliente" />
@@ -441,18 +453,18 @@
         <input id="endereco" placeholder="Endereço (Rua, Nº, Bairro)" />
       </div>
 
-      <div class="grid cols-3" style="margin-top:10px">
+      <div class="grid cols-2" style="margin-top:10px">
         <div>
           <label>Data</label>
           <input id="data" type="date" />
         </div>
         <div>
-          <label>Hora</label>
-          <input id="hora" type="time" />
-        </div>
-        <div>
-          <label>Garantia (dias)</label>
-          <input id="garantia" type="number" min="0" step="1" value="90" />
+          <label>Forma de pagamento</label>
+          <select id="pagamento">
+            <option value="">Selecione...</option>
+            <option>Dinheiro/Pix</option>
+            <option>Cartão</option>
+          </select>
         </div>
       </div>
     </div>
@@ -466,8 +478,8 @@
       </button>
 
       <div style="margin-top:12px">
-        <label>Observações técnicas</label>
-        <textarea id="obs" placeholder="Observações técnicas (Ex: tubulação de cobre, suporte...)"></textarea>
+        <label>Observações</label>
+        <textarea id="obs" placeholder="Observações (Ex: tubulação de cobre, suporte...)"></textarea>
       </div>
 
       <div class="totals">
@@ -482,21 +494,17 @@
         <span>R$</span>
         <input id="materiais" inputmode="decimal" placeholder="0,00" />
       </div>
-      <div style="margin-top:10px; color:var(--muted); font-weight:700; font-size:13px;">
-        Dica: aqui entra material/peças para somar no total do PDF.
-      </div>
     </div>
   </div>
 
-  <!-- PRINT/PDF VIEW -->
+  <!-- PDF -->
   <section class="pdf" id="pdf">
     <div class="top">
       <div class="brand">
-        <img id="pdfLogo" alt="logo" />
+        <img id="pdfLogo" src="logo.png" alt="logo" onerror="this.style.display='none'"/>
         <div>
           <h2>Técnico</h2>
           <p>Orçamento Profissional</p>
-          <p style="margin-top:6px; color:#111827; font-weight:900" id="pdfEmpresa"></p>
         </div>
       </div>
       <div class="datebox">
@@ -505,17 +513,11 @@
       </div>
     </div>
 
-    <div class="cards">
-      <div class="box">
-        <small>Cliente</small>
-        <div id="pdfCliente" style="font-weight:900; color:#111827"></div>
-        <div id="pdfEndereco" style="margin-top:6px; color:#667085; font-weight:700"></div>
-        <div id="pdfTelefone" style="margin-top:4px; color:#667085; font-weight:700"></div>
-      </div>
-      <div class="box">
-        <small>Observações</small>
-        <div id="pdfObs" style="white-space:pre-wrap; color:#334155; font-weight:700"></div>
-      </div>
+    <div class="clientbox">
+      <small>Cliente</small>
+      <div id="pdfCliente" style="font-weight:1000; color:#111827"></div>
+      <div id="pdfEndereco" style="margin-top:6px; color:#667085; font-weight:800"></div>
+      <div id="pdfTelefone" style="margin-top:4px; color:#667085; font-weight:800"></div>
     </div>
 
     <table>
@@ -536,9 +538,19 @@
       </div>
     </div>
 
+    <div class="bottom">
+      <div class="box">
+        <small>Forma de pagamento</small>
+        <div id="pdfPagamento" style="color:#334155; font-weight:900"></div>
+      </div>
+      <div class="box">
+        <small>Observações</small>
+        <div id="pdfObs" style="white-space:pre-wrap; color:#334155; font-weight:800"></div>
+      </div>
+    </div>
+
     <div class="footer">
-      <div>Garantia de <b id="pdfGarantia">90</b> dias sobre os serviços prestados.</div>
-      <div style="margin-top:6px">Orçamento gerado via app de Climatização</div>
+      <div>Orçamento gerado via app de Climatização</div>
     </div>
   </section>
 
@@ -550,12 +562,10 @@
   </div>
 
 <script>
-  // ======= Helpers: BRL money =======
   const brl = new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' });
 
   function parseBRL(str){
     if(!str) return 0;
-    // aceita "1.234,56" ou "1234,56"
     const s = String(str).replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',', '.');
     const n = Number(s);
     return Number.isFinite(n) ? n : 0;
@@ -563,7 +573,6 @@
 
   function formatInputBRL(input){
     const n = parseBRL(input.value);
-    // mantemos só 2 casas
     input.value = (n).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   }
 
@@ -573,14 +582,6 @@
     return new Date(Date.now()-tzOff).toISOString().slice(0,10);
   }
 
-  function nowTimeHHMM(){
-    const d = new Date();
-    const hh = String(d.getHours()).padStart(2,'0');
-    const mm = String(d.getMinutes()).padStart(2,'0');
-    return `${hh}:${mm}`;
-  }
-
-  // ======= Services preset list (edite aqui) =======
   const PRESETS = [
     { name: "Instalação Split 9000/12000 BTUs", price: 500 },
     { name: "Instalação Split 18000/24000 BTUs", price: 800 },
@@ -591,17 +592,15 @@
     { name: "Limpeza Química (Desmontagem Completa)", price: 350 },
   ];
 
-  // ======= State =======
-  const state = {
-    items: []
-  };
+  const state = { items: [] };
+  const listEl = document.getElementById('servicesList');
 
-  function addItem(presetIndex = -1){
+  function addItem(){
     const item = {
       id: crypto.randomUUID(),
-      presetIndex,
-      desc: presetIndex >= 0 ? PRESETS[presetIndex].name : "",
-      price: presetIndex >= 0 ? PRESETS[presetIndex].price : 0,
+      presetIndex: -1,
+      desc: "",
+      price: 0,
       qty: 1
     };
     state.items.push(item);
@@ -622,15 +621,21 @@
     recalc();
   }
 
-  // ======= UI Render =======
-  const listEl = document.getElementById('servicesList');
-
   function renderItems(){
     listEl.innerHTML = "";
+    if(state.items.length === 0){
+      const empty = document.createElement('div');
+      empty.style.color = "#6b7280";
+      empty.style.fontWeight = "800";
+      empty.style.padding = "6px 2px";
+      empty.textContent = "Nenhum serviço adicionado. Clique em “ADICIONAR ITEM”.";
+      listEl.appendChild(empty);
+      return;
+    }
+
     state.items.forEach((it) => {
       const div = document.createElement('div');
       div.className = "service";
-      div.dataset.id = it.id;
 
       div.innerHTML = `
         <div class="service-top">
@@ -661,7 +666,6 @@
       const qtyBox = div.querySelector('.qty');
       const qtyLabel = div.querySelector('.qty b');
 
-      // Select
       sel.addEventListener('change', (e) => {
         const idx = Number(e.target.value);
         if(idx >= 0){
@@ -671,20 +675,16 @@
         }
       });
 
-      // Remove
       trash.addEventListener('click', () => removeItem(it.id));
 
-      // Price formatting
       priceInput.addEventListener('blur', () => {
         formatInputBRL(priceInput);
         setItem(it.id, { price: parseBRL(priceInput.value) });
       });
       priceInput.addEventListener('input', () => {
-        // não força formatar a cada tecla (pra não brigar com usuário)
         setItem(it.id, { price: parseBRL(priceInput.value) });
       });
 
-      // Qty
       qtyBox.addEventListener('click', (e) => {
         const btn = e.target.closest('button');
         if(!btn) return;
@@ -700,7 +700,6 @@
     });
   }
 
-  // ======= Totals =======
   const materiaisInput = document.getElementById('materiais');
   const materiaisLabel = document.getElementById('materiaisLabel');
   const totalLabel = document.getElementById('totalLabel');
@@ -721,42 +720,39 @@
   materiaisInput.addEventListener('blur', () => { formatInputBRL(materiaisInput); recalc(); });
   materiaisInput.addEventListener('input', recalc);
 
-  // ======= PDF Populate + Print =======
+  function escapeHtml(s){
+    return String(s)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
   function fillPDF(){
-    const empresa = document.getElementById('empresa').value.trim();
     const cliente = document.getElementById('cliente').value.trim();
     const endereco = document.getElementById('endereco').value.trim();
     const telefone = document.getElementById('telefone').value.trim();
     const obs = document.getElementById('obs').value.trim();
+    const pagamento = document.getElementById('pagamento').value.trim();
     const data = document.getElementById('data').value;
-    const hora = document.getElementById('hora').value;
-    const garantia = document.getElementById('garantia').value || "0";
-    const logoUrl = document.getElementById('logoUrl').value.trim();
 
-    document.getElementById('pdfEmpresa').textContent = empresa || "";
     document.getElementById('pdfCliente').textContent = cliente || "Cliente";
     document.getElementById('pdfEndereco').textContent = endereco || "";
     document.getElementById('pdfTelefone').textContent = telefone || "";
     document.getElementById('pdfObs').textContent = obs || "";
+    document.getElementById('pdfPagamento').textContent = pagamento || "";
 
-    // data bonita no PDF (igual a imagem)
     const d = data ? new Date(data+"T00:00:00") : new Date();
     const dd = String(d.getDate()).padStart(2,'0');
     const mm = String(d.getMonth()+1).padStart(2,'0');
     const yyyy = d.getFullYear();
     document.getElementById('pdfData').textContent = `${dd}/${mm}/${yyyy}`;
 
-    document.getElementById('pdfGarantia').textContent = garantia;
-
-    // logo (se vazio, usa um placeholder transparente)
-    const pdfLogo = document.getElementById('pdfLogo');
-    pdfLogo.src = logoUrl || "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
-
-    // tabela itens
     const tbody = document.getElementById('pdfTbody');
     tbody.innerHTML = "";
-    let totalServ = 0;
 
+    let totalServ = 0;
     state.items.forEach(it => {
       const desc = it.desc || "Serviço";
       const qty = Number(it.qty) || 1;
@@ -779,20 +775,9 @@
     document.getElementById('pdfTotal').textContent = brl.format(total);
   }
 
-  function escapeHtml(s){
-    return String(s)
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-  // ======= Buttons =======
-  document.getElementById('btnAdd').addEventListener('click', () => addItem(-1));
+  document.getElementById('btnAdd').addEventListener('click', addItem);
 
   document.getElementById('btnPdf').addEventListener('click', () => {
-    if(state.items.length === 0) addItem(0);
     fillPDF();
     window.print();
   });
@@ -800,24 +785,19 @@
   document.getElementById('btnLimpar').addEventListener('click', () => {
     state.items = [];
     renderItems();
-    document.getElementById('empresa').value = "";
-    document.getElementById('logoUrl').value = "";
     document.getElementById('cliente').value = "";
     document.getElementById('endereco').value = "";
     document.getElementById('telefone').value = "";
     document.getElementById('obs').value = "";
+    document.getElementById('pagamento').value = "";
     materiaisInput.value = "";
-    document.getElementById('garantia').value = "90";
     document.getElementById('data').value = todayISO();
-    document.getElementById('hora').value = nowTimeHHMM();
     recalc();
   });
 
-  // ======= Init =======
+  // init
   document.getElementById('data').value = todayISO();
-  document.getElementById('hora').value = nowTimeHHMM();
-  addItem(0); addItem(2); // começa com 2 itens exemplo (pode remover)
-  formatInputBRL(materiaisInput);
+  renderItems();    // começa zerado
   recalc();
 </script>
 </body>
