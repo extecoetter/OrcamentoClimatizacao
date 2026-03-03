@@ -1138,12 +1138,8 @@ async function enviarPdfParaWhatsapp(){
 
   document.getElementById('btnAdd').addEventListener('click', addItem);
 
-  document.getElementById('btnPdf').addEventListener('click', () => {
-    fillPDF();
-    window.print();
-  });
-
-  const btnWhats = document.getElementById('btnWhats');
+  document.getElementById('btnPdf').addEventListener('click', gerarPdfECompartilhar);
+const btnWhats = document.getElementById('btnWhats');
   if(btnWhats){
     btnWhats.addEventListener('click', enviarPdfParaWhatsapp);
   }
@@ -1177,5 +1173,86 @@ async function enviarPdfParaWhatsapp(){
   renderItems(); // começa zerado
   recalc();
 </script>
+
+<!-- Libs para gerar PDF e tentar compartilhar -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js">
+
+// --- Gerar PDF e abrir compartilhamento (quando suportado) ---
+async function gerarPdfBlob(){
+  const pdfEl = document.getElementById('pdf');
+  if(!pdfEl) throw new Error("Seção do PDF não encontrada.");
+
+  // Garante dados atualizados no PDF
+  if(typeof fillPDF === 'function') fillPDF();
+
+  const canvas = await html2canvas(pdfEl, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+  const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "p", unit: "pt", format: "a4" });
+
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+
+  const imgW = pageW;
+  const imgH = (canvas.height * imgW) / canvas.width;
+
+  if(imgH <= pageH){
+    doc.addImage(imgData, "JPEG", 0, 0, imgW, imgH);
+  }else{
+    let y = 0;
+    let remaining = imgH;
+    while(remaining > 0){
+      doc.addImage(imgData, "JPEG", 0, -y, imgW, imgH);
+      remaining -= pageH;
+      y += pageH;
+      if(remaining > 0) doc.addPage();
+    }
+  }
+
+  return doc.output("blob");
+}
+
+async function gerarPdfECompartilhar(){
+  try{
+    const blob = await gerarPdfBlob();
+    const file = new File([blob], "proposta.pdf", { type: "application/pdf" });
+
+    // Tenta share direto (Android/Chrome geralmente)
+    if(navigator.share){
+      try{
+        if(!navigator.canShare || navigator.canShare({ files: [file] })){
+          await navigator.share({
+            title: "Proposta Comercial",
+            text: "Segue a proposta em PDF.",
+            files: [file]
+          });
+          return;
+        }
+      }catch(e){
+        // segue fallback
+      }
+    }
+
+    // Fallback: abre PDF em nova aba (visualizador costuma ter botão de compartilhar)
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank");
+    setTimeout(()=>URL.revokeObjectURL(url), 60000);
+  }catch(err){
+    // Se algo falhar, mantém o fluxo antigo de impressão como último fallback
+    try{
+      if(typeof fillPDF === 'function') fillPDF();
+      window.print();
+    }catch(e2){
+      alert("Não foi possível gerar/compartilhar o PDF: " + (err && err.message ? err.message : err));
+    }
+  }
+}
+
+
+</script>
+
+
 </body>
 </html>
