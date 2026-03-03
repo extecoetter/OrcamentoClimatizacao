@@ -248,7 +248,7 @@
     /* PDF (PRINT) */
     .pdf{
       display:none;
-      padding: 24px;
+      padding: 14px;
       background:#fff;
       color:#0b1220;
     }
@@ -266,18 +266,18 @@
     .pdf .top{
       position:relative;
       border-bottom: 1px solid #e5e7eb;
-      padding-bottom: 10px;
+      padding-bottom: 8px;
       padding-top: 0px;
-      min-height: 120px; /* menos espaço no topo */
+      min-height: 95px; /* ainda menos espaço */
     }
     .pdf .brand{
       width:100%;
       display:flex;
       flex-direction:column;
-      align-items:flex-start; /* alinhado à esquerda */
+      align-items:flex-start;
       text-align:left;
       gap:6px;
-      margin-top:-55px; /* sobe mais (quase colado no topo) */
+      margin-top:-75px; /* sobe tudo mais */
     }
     .pdf .brand img{
       width:310px; /* ajuste aqui se quiser */
@@ -295,6 +295,9 @@
       letter-spacing:.2px;
     }
     .pdf .datebox{
+      position:absolute;
+      right:0;
+      top:-6px; /* sobe um pouco */
       text-align:right;
       font-weight:1000;
       color:#111827;
@@ -378,16 +381,18 @@
     }
 
     .pdf .bottom{
-      margin-top: 14px;
+      margin-top: 10px;
       display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:14px;
+      grid-template-columns: 1fr;
+      gap:10px;
     }
     .pdf .bottom .box{
       border:1px solid #eef2f7;
       border-radius: 12px;
       padding: 14px;
-      min-height: 70px;
+      min-height: 58px;
+      width:100%;
+      text-align:left;
     }
     .pdf .bottom .box small{
       color: var(--brand-strong); /* azul forte */
@@ -397,6 +402,9 @@
       display:block;
       margin-bottom: 6px;
     }
+
+    .pdf .bottom .box.pay small{ font-size: 10px; }
+
 
     /* rodapé removido (sem texto) */
     .pdf .footer{ display:none; }
@@ -509,19 +517,18 @@
       <div class="panel">
         <div class="grand"><span>TOTAL GERAL</span><b id="pdfTotal">R$ 0,00</b></div>
       </div>
-    </div>
-
     <div class="bottom">
-      <div class="box">
-        <small>Forma de pagamento</small>
-        <div id="pdfPagamento" style="color:#334155; font-weight:900"></div>
-      </div>
-      <div class="box">
+      <div class="box obs">
         <small>Observações</small>
-        <div id="pdfObs" style="white-space:pre-wrap; color:#334155; font-weight:800"></div>
+        <div class="value" id="pdfObs"></div>
+      </div>
+      <div class="box pay">
+        <small>Forma de pagamento</small>
+        <div class="value" id="pdfPagamento"></div>
       </div>
     </div>
 
+    </div>
     <div class="footer"></div>
   </section>
 
