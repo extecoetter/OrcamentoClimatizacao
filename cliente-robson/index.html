@@ -795,6 +795,8 @@
     <div class="inner">
       <button class="btn" id="btnLimpar" type="button">Limpar</button>
       <button class="btn primary" id="btnPdf" type="button">Gerar PDF</button>
+
+<button class="btn" id="btnEnviarProposta" type="button" style="display:none">📲 Enviar proposta</button>
     </div>
   </div>
 
@@ -852,16 +854,9 @@
   const state = { items: [] };
   const listEl = document.getElementById('servicesList');
 
-// Compatibilidade iPhone/Safari: crypto.randomUUID pode não existir
-function uid(){
-  if(window.crypto && typeof crypto.randomUUID === 'function') return uid();
-  return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
-}
-
-
   function addItem(){
     const item = {
-      id: uid(),
+      id: crypto.randomUUID(),
       presetIndex: -1,
       desc: "",
       price: 0,
@@ -1143,14 +1138,44 @@ async function enviarPdfParaWhatsapp(){
 
 
 
-  document.getElementById('btnAdd').addEventListener('click', addItem);
+  // ==========================
+  // Enviar proposta (WhatsApp)
+  // ==========================
+  function buildMsgWhats(){
+    const cliente = (document.getElementById('cliente')?.value || '').trim();
+    const nome = (INSTALLER && INSTALLER.nome) ? INSTALLER.nome : 'Climatização';
 
-  document.getElementById('btnPdf').addEventListener('click', () => {
-    fillPDF();
-    window.print();
-  });
+    const msg =
+`Olá${cliente ? " " + cliente : ""}, segue a proposta do seu serviço de climatização.
 
-  const btnWhats = document.getElementById('btnWhats');
+Qualquer dúvida estou à disposição.
+
+Att,
+${nome}`;
+    return encodeURIComponent(msg);
+  }
+
+  const btnEnviarProposta = document.getElementById('btnEnviarProposta');
+  if(btnEnviarProposta){
+    btnEnviarProposta.addEventListener('click', () => {
+      const url = "https://wa.me/?text=" + buildMsgWhats();
+      window.open(url, "_blank");
+    });
+  }
+
+document.getElementById('btnAdd').addEventListener('click', addItem);
+
+  
+document.getElementById('btnPdf').addEventListener('click', () => {
+  fillPDF();
+  // mostra o botão de enviar proposta (Whats) depois de gerar a proposta
+  try{
+    const b = document.getElementById('btnEnviarProposta');
+    if(b) b.style.display = 'block';
+  }catch(e){}
+  window.print();
+});
+const btnWhats = document.getElementById('btnWhats');
   if(btnWhats){
     btnWhats.addEventListener('click', enviarPdfParaWhatsapp);
   }
