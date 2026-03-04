@@ -1,9 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
 <script>
-  const slug = "robsonextecoetter";
-  const parts = location.pathname.split("/").filter(Boolean);
-  const idx = parts.indexOf("clientes");
-  const baseParts = idx >= 0 ? parts.slice(0, idx) : parts.slice(0, 1);
-  const base = "/" + baseParts.join("/");
-  const target = (base === "/" ? "" : base) + "/app/index.html?c=" + encodeURIComponent(slug);
-  document.body.innerHTML = "<pre>pathname: " + location.pathname + "\nbase: " + base + "\ntarget: " + target + "</pre>";
+window.location.href = "/app/index.html?c=robsonextecoetter";
 </script>
+</head>
+<body>
+</body>
+</html>
