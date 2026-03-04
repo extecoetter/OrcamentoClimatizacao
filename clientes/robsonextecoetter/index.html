@@ -7,15 +7,13 @@
 </head>
 <body>
 <script>
-  // Descobre a "raiz" do site (inclui /REPO no GitHub Pages)
-  // Ex: /meurepo/clientes/robson/  -> base = /meurepo
-  const p = location.pathname.replace(/\/$/, ""); // remove barra final
-  const base = p.split("/clientes/")[0];          // tudo antes de /clientes/
+  // Detecta a base do GitHub Pages (inclui /NOME_DO_REPO)
+  const p = location.pathname.replace(/\/$/, "");
+  const base = p.split("/clientes/")[0];
 
-  const slug = "robson";
+  const slug = "robsonextecoetter";
   const target = base + "/app/index.html?c=" + encodeURIComponent(slug);
 
-  // replace evita voltar pra tela do loader ao apertar "voltar"
   location.replace(target);
 </script>
 </body>
