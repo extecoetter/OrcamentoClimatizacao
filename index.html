@@ -5,7 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Proposta Comercial - Climatização</title>
 
-  <style>
+  
+<!-- PWA (BETA 0.1.x) -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1f6feb">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Orçamento Climatização">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<!-- /PWA -->
+<style>
     :root{
       --bg:#f3f6fb;
       --card:#ffffff;
@@ -637,8 +647,52 @@
   font-size: 28px !important;
 }
 
+  
+/* --- BETA 0.1.5: ocultar dados do instalador no PDF (só CSS) --- */
+.pdf .instaladorBox{ display:none !important; }
+
   </style>
+
+<script>
+  // BETA DEBUG (0.1.3) - mostra erros na tela
+  (function(){
+    function ensureBox(){
+      var box = document.getElementById('betaDebug');
+      if(box) return box;
+      box = document.createElement('div');
+      box.id = 'betaDebug';
+      box.style.cssText = 'position:fixed;left:8px;right:8px;top:8px;max-height:32vh;overflow:auto;z-index:99999;background:rgba(0,0,0,.88);color:#fff;font:12px/1.35 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;padding:10px;border-radius:12px;display:none;white-space:pre-wrap;';
+      function attach(){ try{ (document.body||document.documentElement).appendChild(box); }catch(e){} }
+      if(document.body) attach(); else document.addEventListener('DOMContentLoaded', attach, { once:true });
+      return box;
+    }
+    function show(msg){
+      var box = ensureBox();
+      box.style.display = 'block';
+      box.textContent += (box.textContent ? '
+' : '') + msg;
+    }
+    window.__betaShow = show;
+    window.addEventListener('error', function(e){
+      show('[ERRO] ' + (e.message || 'erro') + (e.filename ? ('
+' + e.filename + ':' + e.lineno) : ''));
+    });
+    window.addEventListener('unhandledrejection', function(e){
+      show('[PROMISE] ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)));
+    });
+  })();
+</script>
+
+
+<!-- Libs opcionais: usadas apenas para gerar PDF sem cabeçalho/rodapé no iPhone em modo App -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js">
+  <script>
+    // Versão visível (ajuda no beta)
+    try{ document.title = "Orçamento Climatização - BETA 0.1.5"; }catch(e){}
+  </script>
 </head>
+
 
 <body>
   <div class="wrap">
@@ -791,19 +845,13 @@
     <div class="footer"></div>
   </section>
 
-  <div class="actions">
-    <div class="inner">
-      <button class="btn" id="btnLimpar">Limpar</button>
-      <button class="btn primary" id="btnPdf">Gerar PDF</button>
-          <button cla
-<!-- Libs para gerar PDF e compartilhar (necessita internet, ou salve os arquivos localmente no seu repo) -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-
-ss="btn" id="btnWhats" type="button">Enviar para WhatsApp</button>
-    </div>
+  
+<div class="actions">
+  <div class="inner">
+    <button class="btn" id="btnLimpar" type="button">Limpar</button>
+    <button class="btn primary" id="btnPdf" type="button">Gerar PDF</button>
   </div>
-
+</div>
 
 <!-- Config por cliente (coloque um config.js dentro da pasta do cliente) -->
 <script>
@@ -859,9 +907,18 @@ ss="btn" id="btnWhats" type="button">Enviar para WhatsApp</button>
   const state = { items: [] };
   const listEl = document.getElementById('servicesList');
 
+// iPhone/Safari: crypto.randomUUID pode não existir
+function uid(){
+  try{
+    if(window.crypto && typeof crypto.randomUUID === 'function') return uid();
+  }catch(e){}
+  return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+}
+
+
   function addItem(){
     const item = {
-      id: crypto.randomUUID(),
+      id: uid(),
       presetIndex: -1,
       desc: "",
       price: 0,
@@ -1183,6 +1240,92 @@ async function enviarPdfParaWhatsapp(){
   document.getElementById('data').value = todayISO();
   renderItems(); // começa zerado
   recalc();
+
+// PWA: Service Worker (BETA 0.1.5)
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+  });
+}
+
+
+// --- PDF sem cabeçalho/rodapé (iOS em modo App/PWA) ---
+function __isIOS(){
+  const ua = navigator.userAgent || "";
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+function __isStandalone(){
+  return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+}
+
+async function __gerarPdfBlobSemCabecalho(){
+  if(typeof fillPDF === 'function') fillPDF();
+  const pdfEl = document.getElementById('pdf');
+  if(!pdfEl) throw new Error('Seção do PDF não encontrada.');
+  if(typeof html2canvas !== 'function' || !window.jspdf || !window.jspdf.jsPDF){
+    // fallback
+    window.print();
+    return null;
+  }
+
+  const canvas = await html2canvas(pdfEl, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+  const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "p", unit: "pt", format: "a4" });
+
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+
+  const imgW = pageW;
+  const imgH = (canvas.height * imgW) / canvas.width;
+
+  if(imgH <= pageH){
+    doc.addImage(imgData, "JPEG", 0, 0, imgW, imgH);
+  }else{
+    let y = 0;
+    let remaining = imgH;
+    while(remaining > 0){
+      doc.addImage(imgData, "JPEG", 0, -y, imgW, imgH);
+      remaining -= pageH;
+      y += pageH;
+      if(remaining > 0) doc.addPage();
+    }
+  }
+  return doc.output("blob");
+}
+
+function __abrirBlobPdf(blob){
+  const url = URL.createObjectURL(blob);
+  window.open(url, "_blank");
+  setTimeout(()=>URL.revokeObjectURL(url), 60000);
+}
+
+// Captura o clique do botão PDF antes de qualquer outro listener
+document.addEventListener('DOMContentLoaded', ()=>{
+  const btn = document.getElementById('btnPdf');
+  if(!btn) return;
+
+  btn.addEventListener('click', async (e)=>{
+    // impede handlers antigos (se existirem)
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    try{
+      if(__isIOS() && __isStandalone()){
+        const blob = await __gerarPdfBlobSemCabecalho();
+        if(blob) __abrirBlobPdf(blob);
+        return;
+      }
+    }catch(err){
+      // se der erro, cai no print normal
+    }
+
+    try{ if(typeof fillPDF === 'function') fillPDF(); }catch(e2){}
+    window.print();
+  }, true);
+});
+
 </script>
 </body>
 </html>
