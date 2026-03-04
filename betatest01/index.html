@@ -648,7 +648,7 @@
 }
 
   
-/* --- BETA 0.1.3: ocultar dados do instalador no PDF (só CSS) --- */
+/* --- BETA 0.1.4: ocultar dados do instalador no PDF (só CSS) --- */
 .pdf .instaladorBox{ display:none !important; }
 
   </style>
@@ -682,6 +682,11 @@
     });
   })();
 </script>
+
+
+<!-- Libs opcionais: usadas apenas para gerar PDF sem cabeçalho/rodapé no iPhone em modo App -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 </head>
 
@@ -836,19 +841,13 @@
     <div class="footer"></div>
   </section>
 
-  <div class="actions">
-    <div class="inner">
-      <button class="btn" id="btnLimpar">Limpar</button>
-      <button class="btn primary" id="btnPdf">Gerar PDF</button>
-          <button cla
-<!-- Libs para gerar PDF e compartilhar (necessita internet, ou salve os arquivos localmente no seu repo) -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-
-ss="btn" id="btnWhats" type="button">Enviar para WhatsApp</button>
-    </div>
+  
+<div class="actions">
+  <div class="inner">
+    <button class="btn" id="btnLimpar" type="button">Limpar</button>
+    <button class="btn primary" id="btnPdf" type="button">Gerar PDF</button>
   </div>
-
+</div>
 
 <!-- Config por cliente (coloque um config.js dentro da pasta do cliente) -->
 <script>
@@ -1238,12 +1237,90 @@ async function enviarPdfParaWhatsapp(){
   renderItems(); // começa zerado
   recalc();
 
-// PWA: Service Worker (BETA 0.1.3)
+// PWA: Service Worker (BETA 0.1.4)
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('service-worker.js').catch(()=>{});
   });
 }
+
+
+// --- PDF sem cabeçalho/rodapé (iOS em modo App/PWA) ---
+function __isIOS(){
+  const ua = navigator.userAgent || "";
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+function __isStandalone(){
+  return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+}
+
+async function __gerarPdfBlobSemCabecalho(){
+  if(typeof fillPDF === 'function') fillPDF();
+  const pdfEl = document.getElementById('pdf');
+  if(!pdfEl) throw new Error('Seção do PDF não encontrada.');
+  if(typeof html2canvas !== 'function' || !window.jspdf || !window.jspdf.jsPDF){
+    // fallback
+    window.print();
+    return null;
+  }
+
+  const canvas = await html2canvas(pdfEl, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+  const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "p", unit: "pt", format: "a4" });
+
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+
+  const imgW = pageW;
+  const imgH = (canvas.height * imgW) / canvas.width;
+
+  if(imgH <= pageH){
+    doc.addImage(imgData, "JPEG", 0, 0, imgW, imgH);
+  }else{
+    let y = 0;
+    let remaining = imgH;
+    while(remaining > 0){
+      doc.addImage(imgData, "JPEG", 0, -y, imgW, imgH);
+      remaining -= pageH;
+      y += pageH;
+      if(remaining > 0) doc.addPage();
+    }
+  }
+  return doc.output("blob");
+}
+
+function __abrirBlobPdf(blob){
+  const url = URL.createObjectURL(blob);
+  window.open(url, "_blank");
+  setTimeout(()=>URL.revokeObjectURL(url), 60000);
+}
+
+// Captura o clique do botão PDF antes de qualquer outro listener
+document.addEventListener('DOMContentLoaded', ()=>{
+  const btn = document.getElementById('btnPdf');
+  if(!btn) return;
+
+  btn.addEventListener('click', async (e)=>{
+    // impede handlers antigos (se existirem)
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    try{
+      if(__isIOS() && __isStandalone()){
+        const blob = await __gerarPdfBlobSemCabecalho();
+        if(blob) __abrirBlobPdf(blob);
+        return;
+      }
+    }catch(err){
+      // se der erro, cai no print normal
+    }
+
+    try{ if(typeof fillPDF === 'function') fillPDF(); }catch(e2){}
+    window.print();
+  }, true);
+});
 
 </script>
 </body>
