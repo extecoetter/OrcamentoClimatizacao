@@ -1,12 +1,22 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<script>
-  // redireciona para o app central informando qual cliente é
-  window.location.href = "../../app/index.html?c=robson";
-</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Abrindo app…</title>
 </head>
 <body>
+<script>
+  // Descobre a "raiz" do site (inclui /REPO no GitHub Pages)
+  // Ex: /meurepo/clientes/robson/  -> base = /meurepo
+  const p = location.pathname.replace(/\/$/, ""); // remove barra final
+  const base = p.split("/clientes/")[0];          // tudo antes de /clientes/
+
+  const slug = "robson";
+  const target = base + "/app/index.html?c=" + encodeURIComponent(slug);
+
+  // replace evita voltar pra tela do loader ao apertar "voltar"
+  location.replace(target);
+</script>
 </body>
 </html>
