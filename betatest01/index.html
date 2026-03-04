@@ -3,7 +3,7 @@
 <!-- =========================================================
      ORÇAMENTO CLIMATIZAÇÃO — BETA
      Arquivo: index.html (único)
-     Versão: BETA 0.1.15
+     Versão: BETA 0.1.16
      Regras:
      - Mudanças devem ser "cirúrgicas"
      - Evitar mexer em layout do PDF sem necessidade
@@ -500,7 +500,7 @@
 
       #betaBadge{ display:none !important; }
 
-      /* BETA 0.1.15: ocultar dados do instalador no PDF (só CSS) */
+      /* BETA 0.1.16: ocultar dados do instalador no PDF (só CSS) */
       .pdf .instaladorBox{ display:none !important; }
     }
   
@@ -510,7 +510,7 @@
   </style>
 <script>
     // === BETA CONFIG ======================================================
-    window.APP_VERSION = "0.1.15";
+    window.APP_VERSION = "0.1.16";
     // =====================================================================
     try{ document.title = "Orçamento Climatização - BETA " + window.APP_VERSION; }catch(e){}
   </script>
@@ -980,12 +980,23 @@
 
       // Garante que o PDF esteja visível pra capturar
       const prev = pdfEl.style.display;
+      const prevW = pdfEl.style.width;
       pdfEl.style.display = "block";
 
       await new Promise(requestAnimationFrame);
       await new Promise(requestAnimationFrame);
 
-      const canvas = await html2canvas(pdfEl, { scale: 1.6, useCORS: true, backgroundColor: "#ffffff" });
+      const canvas = await html2canvas(pdfEl, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        onclone: (doc) => {
+          const el = doc.getElementById("pdf");
+          if(el) el.setAttribute("data-capture","1");
+          const inst = doc.querySelector("#pdf .instaladorBox");
+          if(inst) inst.style.display = "none";
+        }
+      });
 
       // volta pro estado anterior
       pdfEl.style.display = prev || "";
@@ -1006,7 +1017,11 @@
       const rawW = canvas.width;
       const rawH = canvas.height;
 
-      const scale = Math.min(maxW / rawW, maxH / rawH) * 0.95;
+      let scale = (maxW / rawW);
+      // se passar da altura, reduz
+      if(rawH * scale > maxH) scale = (maxH / rawH);
+      // pequena folga para evitar corte por arredondamento
+      scale = scale * 0.98;
 const drawW = rawW * scale;
       const drawH = rawH * scale;
 
@@ -1098,10 +1113,10 @@ return doc.output("blob");
     renderItems();
     recalc();
 
-    // PWA: Service Worker (BETA 0.1.15)
+    // PWA: Service Worker (BETA 0.1.16)
     if('serviceWorker' in navigator){
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js?v=0.1.15').catch(()=>{});
+        navigator.serviceWorker.register('service-worker.js?v=0.1.16').catch(()=>{});
       });
     }
   </script>
