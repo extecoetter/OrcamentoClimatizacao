@@ -648,8 +648,14 @@
 }
 
   
-/* --- BETA 0.1.9: ocultar dados do instalador no PDF (só CSS) --- */
+/* --- BETA 0.1.10: ocultar dados do instalador no PDF (só CSS) --- */
 .pdf .instaladorBox{ display:none !important; }
+
+  
+/* --- BETA 0.1.10: não imprimir badge/debug no PDF --- */
+@media print{
+  #betaBadge, #betaDebug{ display:none !important; }
+}
 
   </style>
 
@@ -685,7 +691,7 @@
 
 
 <script>
-  try{ document.title = "Orçamento Climatização - BETA 0.1.9"; }catch(e){}
+  try{ document.title = "Orçamento Climatização - BETA 0.1.10"; }catch(e){}
 </script>
 
 </head>
@@ -841,19 +847,13 @@
     <div class="footer"></div>
   </section>
 
-  <div class="actions">
-    <div class="inner">
-      <button class="btn" id="btnLimpar">Limpar</button>
-      <button class="btn primary" id="btnPdf">Gerar PDF</button>
-          <button cla
-<!-- Libs para gerar PDF e compartilhar (necessita internet, ou salve os arquivos localmente no seu repo) -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-
-Enviar para WhatsApp</button>
-    </div>
+  
+<div class="actions">
+  <div class="inner">
+    <button class="btn" id="btnLimpar" type="button">Limpar</button>
+    <button class="btn primary" id="btnPdf" type="button">Gerar PDF</button>
   </div>
-
+</div>
 
 <!-- Config por cliente (coloque um config.js dentro da pasta do cliente) -->
 <script>
@@ -1237,7 +1237,7 @@ async function enviarPdfParaWhatsapp(){
   renderItems(); // começa zerado
   recalc();
 
-// PWA: Service Worker (BETA 0.1.9)
+// PWA: Service Worker (BETA 0.1.10)
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('service-worker.js').catch(()=>{});
@@ -1245,6 +1245,6 @@ if('serviceWorker' in navigator){
 }
 
 </script>
-<div id="betaBadge" style="position:fixed;right:10px;bottom:10px;z-index:2147483647;background:rgba(31,111,235,.97);color:#fff;font:12px/1 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;padding:7px 10px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.25);">BETA 0.1.9</div>
+<div id="betaBadge" style="position:fixed;right:10px;bottom:10px;z-index:2147483647;background:rgba(31,111,235,.97);color:#fff;font:12px/1 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;padding:7px 10px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.25);">BETA 0.1.10</div>
 </body>
 </html>
