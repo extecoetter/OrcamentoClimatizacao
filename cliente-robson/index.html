@@ -638,11 +638,6 @@
 }
 
   </style>
-
-<!-- Libs opcionais: usados apenas para compartilhar PDF direto em alguns Android -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-
 </head>
 
 <body>
@@ -857,9 +852,16 @@
   const state = { items: [] };
   const listEl = document.getElementById('servicesList');
 
+// Compatibilidade iPhone/Safari: crypto.randomUUID pode não existir
+function uid(){
+  if(window.crypto && typeof crypto.randomUUID === 'function') return uid();
+  return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+}
+
+
   function addItem(){
     const item = {
-      id: crypto.randomUUID(),
+      id: uid(),
       presetIndex: -1,
       desc: "",
       price: 0,
@@ -1068,6 +1070,37 @@ const obs = document.getElementById('obs').value.trim();
 
     document.getElementById('pdfTotal').textContent = brl.format(totalFinal);
   }
+
+async function gerarPdfBlob(){
+  // Gera um PDF a partir da seção #pdf (sem abrir print)
+  const pdfEl = document.getElementById('pdf');
+  if(!pdfEl) throw new Error("Seção do PDF não encontrada.");
+  // Renderiza em canvas (melhor em mobile se o elemento estiver visível)
+  const canvas = await html2canvas(pdfEl, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+  const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "p", unit: "pt", format: "a4" });
+
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+
+  // Ajusta imagem à largura da página, mantendo proporção
+  const imgW = pageW;
+  const imgH = (canvas.height * imgW) / canvas.width;
+
+  if(imgH <= pageH){
+    doc.addImage(imgData, "JPEG", 0, 0, imgW, imgH);
+  }else{
+    // Paginação simples (corta em múltiplas páginas)
+    let y = 0;
+    let remaining = imgH;
+    while(remaining > 0){
+      doc.addImage(imgData, "JPEG", 0, -y, imgW, imgH);
+      remaining -= pageH;
+      y += pageH;
+      if(remaining > 0) doc.addPage();
+    }
   }
 
   const blob = doc.output("blob");
@@ -1112,7 +1145,9 @@ async function enviarPdfParaWhatsapp(){
 
   document.getElementById('btnAdd').addEventListener('click', addItem);
 
-  window.print();
+  document.getElementById('btnPdf').addEventListener('click', () => {
+    fillPDF();
+    window.print();
   });
 
   const btnWhats = document.getElementById('btnWhats');
@@ -1148,89 +1183,6 @@ async function enviarPdfParaWhatsapp(){
   document.getElementById('data').value = todayISO();
   renderItems(); // começa zerado
   recalc();
-</script>
-<script>
-
-// --- Gerar PDF com melhor compatibilidade ---
-function isIOS(){
-  const ua = navigator.userAgent || "";
-  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-}
-
-async function gerarPdfBlob(){
-  const pdfEl = document.getElementById('pdf');
-  if(!pdfEl) throw new Error("Seção do PDF não encontrada.");
-  if(typeof fillPDF === 'function') fillPDF();
-
-  const canvas = await html2canvas(pdfEl, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
-  const imgData = canvas.toDataURL('image/jpeg', 0.95);
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: "p", unit: "pt", format: "a4" });
-
-  const pageW = doc.internal.pageSize.getWidth();
-  const pageH = doc.internal.pageSize.getHeight();
-  const imgW = pageW;
-  const imgH = (canvas.height * imgW) / canvas.width;
-
-  if(imgH <= pageH){
-    doc.addImage(imgData, "JPEG", 0, 0, imgW, imgH);
-  }else{
-    let y = 0;
-    let remaining = imgH;
-    while(remaining > 0){
-      doc.addImage(imgData, "JPEG", 0, -y, imgW, imgH);
-      remaining -= pageH;
-      y += pageH;
-      if(remaining > 0) doc.addPage();
-    }
-  }
-  return doc.output("blob");
-}
-
-async function onGerarPdfClick(){
-  // iPhone/iPad: caminho mais confiável é o print/preview (salvar/compartilhar por lá)
-  if(isIOS()){
-    try{ if(typeof fillPDF==='function') fillPDF(); }catch(e){}
-    window.print();
-    return;
-  }
-
-  // Android/desktop: tenta share com arquivo quando suportado e libs carregadas
-  try{
-    const canPdfLib = (typeof html2canvas === 'function') && window.jspdf && window.jspdf.jsPDF;
-    if(navigator.share && canPdfLib){
-      const blob = await gerarPdfBlob();
-      const file = new File([blob], "proposta.pdf", { type: "application/pdf" });
-
-      try{
-        if(!navigator.canShare || navigator.canShare({ files: [file] })){
-          await navigator.share({
-            title: "Proposta Comercial",
-            text: "Segue a proposta em PDF.",
-            files: [file]
-          });
-          return;
-        }
-      }catch(e){
-        // cai no print
-      }
-    }
-  }catch(e){
-    // cai no print
-  }
-
-  // Fallback universal
-  try{ if(typeof fillPDF==='function') fillPDF(); }catch(e){}
-  window.print();
-}
-
-// Garante que o botão esteja ligado após o DOM
-document.addEventListener('DOMContentLoaded', ()=>{
-  const btnPdf = document.getElementById('btnPdf');
-  if(btnPdf) btnPdf.addEventListener('click', onGerarPdfClick);
-});
-
 </script>
 </body>
 </html>
