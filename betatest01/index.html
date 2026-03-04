@@ -1,4 +1,16 @@
 <!doctype html>
+
+<!-- =========================================================
+     ORÇAMENTO CLIMATIZAÇÃO — BETA
+     Arquivo: index.html (único)
+     Versão: BETA 0.1.10
+     Regras:
+     - Mudanças devem ser "cirúrgicas"
+     - Evitar mexer em layout do PDF sem necessidade
+     - Patch iPhone: não usar crypto.randomUUID direto
+     - Badge/debug NÃO devem ir para o PDF (print)
+   ========================================================= -->
+
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
@@ -652,7 +664,9 @@
 .pdf .instaladorBox{ display:none !important; }
 
   
-/* --- BETA 0.1.10: não imprimir badge/debug no PDF --- */
+}
+
+  /* --- BETA: não imprimir badge/debug no PDF --- */
 @media print{
   #betaBadge, #betaDebug{ display:none !important; }
 }
@@ -691,7 +705,10 @@
 
 
 <script>
-  try{ document.title = "Orçamento Climatização - BETA 0.1.10"; }catch(e){}
+  // === BETA CONFIG (edite aqui) ==========================================
+  window.APP_VERSION = "0.1.10";
+  // =======================================================================
+  try{ document.title = "Orçamento Climatização - BETA " + window.APP_VERSION; }catch(e){}
 </script>
 
 </head>
@@ -908,12 +925,15 @@
 
   const state = { items: [] };
   const listEl = document.getElementById('servicesList');
+  // === BETA PATCH START: iPhone UID ==================================
+
 
 // iPhone/Safari: crypto.randomUUID pode não existir
 function uid(){
   try{
     if(window.crypto && typeof crypto.randomUUID === 'function') return uid();
-  }catch(e){}
+  }  // === BETA PATCH END: iPhone UID ====================================
+catch(e){}
   return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
 }
 
@@ -1245,6 +1265,18 @@ if('serviceWorker' in navigator){
 }
 
 </script>
-<div id="betaBadge" style="position:fixed;right:10px;bottom:10px;z-index:2147483647;background:rgba(31,111,235,.97);color:#fff;font:12px/1 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;padding:7px 10px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.25);">BETA 0.1.10</div>
+<div id="betaBadge"></div>
+<script>
+  // === BETA UI (não afeta PDF) ===========================================
+  (function(){
+    const v = (window.APP_VERSION || "0.0.0");
+    const badge = document.getElementById('betaBadge');
+    if(badge){
+      badge.textContent = "BETA " + v;
+      badge.style.cssText = "position:fixed;right:10px;bottom:10px;z-index:2147483647;background:rgba(31,111,235,.97);color:#fff;font:12px/1 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;padding:7px 10px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.25);";
+    }
+  })();
+</script>
+
 </body>
 </html>
