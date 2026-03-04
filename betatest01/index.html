@@ -3,7 +3,7 @@
 <!-- =========================================================
      ORÇAMENTO CLIMATIZAÇÃO — BETA
      Arquivo: index.html (único)
-     Versão: BETA 0.1.12
+     Versão: BETA 0.1.14
      Regras:
      - Mudanças devem ser "cirúrgicas"
      - Evitar mexer em layout do PDF sem necessidade
@@ -500,13 +500,13 @@
 
       #betaBadge{ display:none !important; }
 
-      /* BETA 0.1.10: ocultar dados do instalador no PDF (só CSS) */
+      /* BETA 0.1.14: ocultar dados do instalador no PDF (só CSS) */
       .pdf .instaladorBox{ display:none !important; }
     }
   </style>
 <script>
     // === BETA CONFIG ======================================================
-    window.APP_VERSION = "0.1.11";
+    window.APP_VERSION = "0.1.14";
     // =====================================================================
     try{ document.title = "Orçamento Climatização - BETA " + window.APP_VERSION; }catch(e){}
   </script>
@@ -1091,10 +1091,10 @@ return doc.output("blob");
     renderItems();
     recalc();
 
-    // PWA: Service Worker (BETA 0.1.11)
+    // PWA: Service Worker (BETA 0.1.14)
     if('serviceWorker' in navigator){
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+        navigator.serviceWorker.register('service-worker.js?v=0.1.14').catch(()=>{});
       });
     }
   </script>
