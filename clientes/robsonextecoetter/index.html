@@ -1,29 +1,12 @@
-<!doctype html>
-<html lang="pt-BR">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Abrindo…</title>
+<meta charset="UTF-8">
+<script>
+  // redireciona para o app central informando qual cliente é
+  window.location.href = "../../app/index.html?c=robsonextecoetter";
+</script>
 </head>
 <body>
-<script>
-  // Exemplo de pathname no GitHub Pages:
-  // /NOME_DO_REPO/clientes/robsonextecoetter/
-  // Queremos redirecionar para:
-  // /NOME_DO_REPO/app/index.html?c=robsonextecoetter
-
-  const slug = "robsonextecoetter";
-
-  const parts = location.pathname.split("/").filter(Boolean);
-  const idx = parts.indexOf("clientes");
-
-  // tudo antes de "clientes" é a base (inclui /NOME_DO_REPO se existir)
-  const baseParts = idx >= 0 ? parts.slice(0, idx) : parts.slice(0, 1);
-  const base = "/" + baseParts.join("/"); // "" -> "/", "repo" -> "/repo"
-
-  const target = (base === "/" ? "" : base) + "/app/index.html?c=" + encodeURIComponent(slug);
-
-  location.replace(target);
-</script>
 </body>
 </html>
