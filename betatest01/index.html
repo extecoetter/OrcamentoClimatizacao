@@ -5,17 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Proposta Comercial - Climatização</title>
 
-  
-<!-- PWA (BETA 0.1) -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1f6feb">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Orçamento Climatização">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<!-- /PWA -->
-<style>
+  <style>
     :root{
       --bg:#f3f6fb;
       --card:#ffffff;
@@ -647,15 +637,6 @@
   font-size: 28px !important;
 }
 
-  
-/* --- BETA 0.1: ocultar dados do instalador no PDF --- */
-.pdf .instaladorBox{ display:none !important; }
-.pdf .headRow{
-  grid-template-columns: 1fr !important;
-  gap: 0 !important;
-}
-.pdf .datebox{ text-align:right !important; }
-
   </style>
 </head>
 
@@ -871,16 +852,9 @@
   const state = { items: [] };
   const listEl = document.getElementById('servicesList');
 
-// Compatibilidade iPhone/Safari: crypto.randomUUID pode não existir
-function uid(){
-  if(window.crypto && typeof crypto.randomUUID === 'function') return uid();
-  return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
-}
-
-
   function addItem(){
     const item = {
-      id: uid(),
+      id: crypto.randomUUID(),
       presetIndex: -1,
       desc: "",
       price: 0,
@@ -1018,7 +992,6 @@ function escapeHtml(s){
   }
 
   function fillPDF(){
-  // Dados do instalador: desativado no BETA 0.1 (não aparece no PDF)
 
     const cliente = document.getElementById('cliente').value.trim();
     const endereco = document.getElementById('endereco').value.trim();
@@ -1146,12 +1119,7 @@ async function enviarPdfParaWhatsapp(){
 
   document.getElementById('btnAdd').addEventListener('click', addItem);
 
-  
-  // BETA: log de clique
-  try{
-    document.getElementById('btnAdd').addEventListener('click', ()=>{ if(window.__betaShow) window.__betaShow('[INFO] btnAdd clicado'); });
-  }catch(e){}
-document.getElementById('btnPdf').addEventListener('click', () => {
+  document.getElementById('btnPdf').addEventListener('click', () => {
     fillPDF();
     window.print();
   });
@@ -1189,36 +1157,6 @@ document.getElementById('btnPdf').addEventListener('click', () => {
   document.getElementById('data').value = todayISO();
   renderItems(); // começa zerado
   recalc();
-
-// --- PWA: Service Worker (BETA 0.1) ---
-if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js').catch(()=>{});
-  });
-}
-
-
-// --- BETA DEBUG (mostra erros na tela, útil no iPhone sem console) ---
-(function(){
-  const box = document.createElement('div');
-  box.id = 'betaDebug';
-  box.style.cssText = 'position:fixed;left:8px;right:8px;bottom:8px;max-height:35vh;overflow:auto;z-index:99999;background:rgba(0,0,0,.85);color:#fff;font:12px/1.35 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;padding:10px;border-radius:12px;display:none;white-space:pre-wrap;';
-  document.addEventListener('DOMContentLoaded', ()=>document.body.appendChild(box));
-  function show(msg){
-    box.style.display = 'block';
-    box.textContent += (box.textContent ? "
-" : "") + msg;
-  }
-  window.addEventListener('error', (e)=>{
-    show('[ERRO] ' + (e.message || e.error || 'erro') + (e.filename ? ('
-' + e.filename + ':' + e.lineno) : ''));
-  });
-  window.addEventListener('unhandledrejection', (e)=>{
-    show('[PROMISE] ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)));
-  });
-  window.__betaShow = show;
-})();
-
 </script>
 </body>
 </html>
