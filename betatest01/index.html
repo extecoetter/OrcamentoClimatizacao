@@ -648,7 +648,7 @@
 }
 
   
-/* --- BETA 0.1.4: ocultar dados do instalador no PDF (só CSS) --- */
+/* --- BETA 0.1.6: ocultar dados do instalador no PDF (só CSS) --- */
 .pdf .instaladorBox{ display:none !important; }
 
   </style>
@@ -1237,7 +1237,7 @@ async function enviarPdfParaWhatsapp(){
   renderItems(); // começa zerado
   recalc();
 
-// PWA: Service Worker (BETA 0.1.4)
+// PWA: Service Worker (BETA 0.1.6)
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('service-worker.js').catch(()=>{});
@@ -1245,24 +1245,50 @@ if('serviceWorker' in navigator){
 }
 
 
-// --- PDF sem cabeçalho/rodapé (iOS em modo App/PWA) ---
+  if(!btn) return;
+
+  btn.addEventListener('click', async (e)=>{
+    // impede handlers antigos (se existirem)
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    try{
+      if(__isIOS() && __isStandalone()){
+        const blob = await __gerarPdfBlobSemCabecalho();
+        if(blob) __abrirBlobPdf(blob);
+        return;
+      }
+    }catch(err){
+      // se der erro, cai no print normal
+    }
+
+    try{ if(typeof fillPDF === 'function') fillPDF(); }catch(e2){}
+    window.print();
+  }, true);
+});
+
+</script>
+<div id="betaBadge" style="position:fixed;right:10px;bottom:10px;z-index:2147483647;background:rgba(31,111,235,.97);color:#fff;font:12px/1 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;padding:7px 10px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.25);">BETA 0.1.6</div>
+<script>
+// --- PDF iPhone sem URL/data/página (BETA 0.1.6) ---
 function __isIOS(){
   const ua = navigator.userAgent || "";
   return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 }
-function __isStandalone(){
-  return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+function __displayMode(){
+  try{
+    if(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return 'standalone';
+    if(window.navigator.standalone === true) return 'ios-standalone';
+  }catch(e){}
+  return 'browser';
 }
 
-async function __gerarPdfBlobSemCabecalho(){
+async function __gerarPdfBlob(){
   if(typeof fillPDF === 'function') fillPDF();
   const pdfEl = document.getElementById('pdf');
   if(!pdfEl) throw new Error('Seção do PDF não encontrada.');
-  if(typeof html2canvas !== 'function' || !window.jspdf || !window.jspdf.jsPDF){
-    // fallback
-    window.print();
-    return null;
-  }
+  const hasLib = (typeof html2canvas === 'function') && window.jspdf && window.jspdf.jsPDF;
+  if(!hasLib) return null;
 
   const canvas = await html2canvas(pdfEl, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
   const imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -1272,7 +1298,6 @@ async function __gerarPdfBlobSemCabecalho(){
 
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
-
   const imgW = pageW;
   const imgH = (canvas.height * imgW) / canvas.width;
 
@@ -1291,32 +1316,51 @@ async function __gerarPdfBlobSemCabecalho(){
   return doc.output("blob");
 }
 
-function __abrirBlobPdf(blob){
-  const url = URL.createObjectURL(blob);
-  window.open(url, "_blank");
-  setTimeout(()=>URL.revokeObjectURL(url), 60000);
+function __openPdfUrlSameWindow(url){
+  // iOS PWA costuma bloquear window.open; então usamos a própria janela
+  try{ window.location.href = url; return; }catch(e){}
+  // fallback: link click
+  try{
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_self';
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }catch(e){}
 }
 
-// Captura o clique do botão PDF antes de qualquer outro listener
 document.addEventListener('DOMContentLoaded', ()=>{
   const btn = document.getElementById('btnPdf');
   if(!btn) return;
 
-  btn.addEventListener('click', async (e)=>{
-    // impede handlers antigos (se existirem)
-    e.preventDefault();
-    e.stopImmediatePropagation();
+  // badge/texto de versão (extra)
+  try{
+    document.title = "Orçamento Climatização - BETA 0.1.6";
+  }catch(e){}
 
-    try{
-      if(__isIOS() && __isStandalone()){
-        const blob = await __gerarPdfBlobSemCabecalho();
-        if(blob) __abrirBlobPdf(blob);
-        return;
+  btn.addEventListener('click', async (e)=>{
+    try{ if(window.__betaShow) window.__betaShow('[INFO] Gerar PDF clicado | iOS=' + __isIOS() + ' | modo=' + __displayMode()); }catch(_){}
+
+    // No iPhone (browser e app): tenta gerar PDF "real" (sem cabeçalho/rodapé). Se não der, cai pro print.
+    if(__isIOS()){
+      try{
+        const blob = await __gerarPdfBlob();
+        if(blob){
+          const url = URL.createObjectURL(blob);
+          __openPdfUrlSameWindow(url);
+          setTimeout(()=>URL.revokeObjectURL(url), 60000);
+          return;
+        }else{
+          if(window.__betaShow) window.__betaShow('[INFO] Lib PDF não carregou, usando print');
+        }
+      }catch(err){
+        if(window.__betaShow) window.__betaShow('[ERRO] Gerar PDF blob: ' + (err && err.message ? err.message : err));
       }
-    }catch(err){
-      // se der erro, cai no print normal
     }
 
+    // Outros: print padrão
     try{ if(typeof fillPDF === 'function') fillPDF(); }catch(e2){}
     window.print();
   }, true);
