@@ -648,7 +648,7 @@
 }
 
   
-/* --- BETA 0.1.7: ocultar dados do instalador no PDF (só CSS) --- */
+/* --- BETA 0.1.8: ocultar dados do instalador no PDF (só CSS) --- */
 .pdf .instaladorBox{ display:none !important; }
 
   </style>
@@ -681,6 +681,11 @@
       show('[PROMISE] ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)));
     });
   })();
+</script>
+
+
+<script>
+  try{ document.title = "Orçamento Climatização - BETA 0.1.8"; }catch(e){}
 </script>
 
 </head>
@@ -845,7 +850,7 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
-ss="btn" id="btnWhats" type="button">Enviar para WhatsApp</button>
+Enviar para WhatsApp</button>
     </div>
   </div>
 
@@ -1203,12 +1208,6 @@ async function enviarPdfParaWhatsapp(){
     fillPDF();
     window.print();
   });
-
-  const btnWhats = document.getElementById('btnWhats');
-  if(btnWhats){
-    btnWhats.addEventListener('click', enviarPdfParaWhatsapp);
-  }
-
   document.getElementById('btnLimpar').addEventListener('click', () => {
     state.items = [];
     renderItems();
@@ -1238,7 +1237,7 @@ async function enviarPdfParaWhatsapp(){
   renderItems(); // começa zerado
   recalc();
 
-// PWA: Service Worker (BETA 0.1.7)
+// PWA: Service Worker (BETA 0.1.8)
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('service-worker.js').catch(()=>{});
@@ -1246,87 +1245,6 @@ if('serviceWorker' in navigator){
 }
 
 </script>
-<script>
-  // --- PDF iPhone sem URL/data/página (BETA 0.1.7) ---
-  function __isIOS(){
-    const ua = navigator.userAgent || "";
-    return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  }
-  function __hasPdfLib(){
-    return (typeof html2canvas === 'function') && window.jspdf && window.jspdf.jsPDF;
-  }
-  async function __gerarPdfBlob(){
-    try{ if(typeof fillPDF === 'function') fillPDF(); }catch(e){}
-    const pdfEl = document.getElementById('pdf');
-    if(!pdfEl) throw new Error('Seção do PDF não encontrada.');
-    if(!__hasPdfLib()) return null;
-
-    const canvas = await html2canvas(pdfEl, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation: "p", unit: "pt", format: "a4" });
-
-    const pageW = doc.internal.pageSize.getWidth();
-    const pageH = doc.internal.pageSize.getHeight();
-    const imgW = pageW;
-    const imgH = (canvas.height * imgW) / canvas.width;
-
-    if(imgH <= pageH){
-      doc.addImage(imgData, "JPEG", 0, 0, imgW, imgH);
-    }else{
-      let y = 0;
-      let remaining = imgH;
-      while(remaining > 0){
-        doc.addImage(imgData, "JPEG", 0, -y, imgW, imgH);
-        remaining -= pageH;
-        y += pageH;
-        if(remaining > 0) doc.addPage();
-      }
-    }
-    return doc.output("blob");
-  }
-
-  function __openPdfInSameWindow(url){
-    // iOS PWA: usar a mesma janela é o mais confiável
-    try{ window.location.href = url; return; }catch(e){}
-    try{
-      const a = document.createElement('a');
-      a.href = url;
-      a.target = '_self';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }catch(e){}
-  }
-
-  document.addEventListener('DOMContentLoaded', ()=>{
-    // Versão também no título
-    try{ document.title = "Orçamento Climatização - BETA 0.1.7"; }catch(e){}
-
-    const btn = document.getElementById('btnPdf');
-    if(!btn) return;
-
-    btn.addEventListener('click', async (e)=>{
-      // iPhone: tenta PDF "real" pra evitar URL/data/página do print
-      if(__isIOS()){
-        try{
-          const blob = await __gerarPdfBlob();
-          if(blob){
-            const url = URL.createObjectURL(blob);
-            __openPdfInSameWindow(url);
-            setTimeout(()=>URL.revokeObjectURL(url), 60000);
-            return;
-          }
-        }catch(err){}
-      }
-
-      // fallback universal
-      try{ if(typeof fillPDF === 'function') fillPDF(); }catch(e2){}
-      window.print();
-    }, true);
-  });
-</script>
-
+<div id="betaBadge" style="position:fixed;right:10px;bottom:10px;z-index:2147483647;background:rgba(31,111,235,.97);color:#fff;font:12px/1 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;padding:7px 10px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.25);">BETA 0.1.8</div>
 </body>
 </html>
