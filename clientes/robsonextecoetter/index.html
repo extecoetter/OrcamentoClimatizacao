@@ -1,19 +1,14 @@
 <!doctype html>
-<html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Abrindo…</title>
+</head>
 <body>
 <script>
-  const slug = "robsonextecoetter";
-  const path = location.pathname.replace(/\/$/, "");
-  const base = path.split("/clientes/")[0];
-  const target = base + "/app/index.html?c=" + encodeURIComponent(slug);
-
-  document.body.innerHTML =
-    "<pre>" +
-    "pathname: " + location.pathname + "\n" +
-    "base: " + base + "\n" +
-    "target: " + target + "\n\n" +
-    "</pre>" +
-    "<a href='" + target + "'>Abrir app</a>";
+  // Caminho relativo: de /clientes/robsonextecoetter/ sobe 2 níveis e entra em /app/
+  location.replace("../../app/index.html?c=robsonextecoetter");
 </script>
 </body>
 </html>
